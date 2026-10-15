@@ -131,6 +131,8 @@ export const BaruaUtambulishoPDF: React.FC<DocumentPDFProps> = ({
   const subjectName =
     beneficiaryName ||
     (formatFullName(user) !== "N/A" ? formatFullName(user) : fd.applicant_name || "N/A");
+  const applicantName =
+    formatFullName(user) !== "N/A" ? formatFullName(user) : fd.applicant_name || "N/A";
   const applicantCitizenId = getCitizenId(user, fd);
 
   return (
@@ -290,7 +292,7 @@ export const BaruaUtambulishoPDF: React.FC<DocumentPDFProps> = ({
               <View style={s.colLeft}>
                 <View style={s.infoRow}>
                   <Text style={s.infoLabel}>{sw ? "Jina Kamili:" : "Full Name:"}</Text>
-                  <Text style={s.infoValue}>{subjectName}</Text>
+                  <Text style={s.infoValue}>{applicantName}</Text>
                 </View>
                 <View style={s.infoRow}>
                   <Text style={s.infoLabel}>{sw ? "Namba ya Utambulisho wa Raia:" : "Citizen ID Number:"}</Text>
