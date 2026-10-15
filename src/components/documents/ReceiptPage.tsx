@@ -10,6 +10,7 @@ import { TANZANIA_EMBLEM_DATA_URL } from "@/constants/emblem";
 import { splitFee } from "@/constants/serviceFees";
 import { getApplicationAmount } from "@/lib/serviceFees";
 import { formatPaidAmount } from "@/lib/currency";
+import { getCitizenId } from "./types";
 
 const rs = StyleSheet.create({
   page: {
@@ -263,6 +264,7 @@ export const ReceiptPage: React.FC<ReceiptPageProps> = ({ application, lang, qrD
         />
         <TableRow label={sw ? "Huduma" : "Service"} value={application.service_name || "—"} />
         <TableRow label={sw ? "Mlipaji" : "Payer"} value={payerName} alt />
+        <TableRow label={sw ? "Namba ya Utambulisho wa Raia" : "Citizen ID Number"} value={getCitizenId(user, fd)} />
         <TableRow
           label={sw ? "Njia ya Malipo" : "Payment Method"}
           value={pd.payment_method || "E-Mtaa Portal"}

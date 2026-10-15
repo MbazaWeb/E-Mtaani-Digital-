@@ -53,7 +53,7 @@ export async function downloadAgreementPDF(
     const { data: fullApp } = await supabase
       .from("applications")
       .select(
-        "*, users:user_id(first_name, middle_name, last_name, nida_number, phone, region, district, ward, sex, date_of_birth)",
+        "*, users:user_id(first_name, middle_name, last_name, citizen_id, nida_number, phone, region, district, ward, sex, date_of_birth)",
       )
       .eq("id", applicationId)
       .maybeSingle();

@@ -409,6 +409,15 @@ export const formatFullName = (
   );
 };
 
+/** Return the account's system Citizen ID (CT ID), with form snapshots as fallback. */
+export const getCitizenId = (
+  user: Partial<UserProfile> | null | undefined,
+  formData: Record<string, unknown> = {},
+): string => {
+  const id = user?.citizen_id ?? formData.citizen_id ?? formData.applicant_citizen_id;
+  return typeof id === "string" || typeof id === "number" ? String(id) || "N/A" : "N/A";
+};
+
 export const formatDate = (dateString?: string | null): string => {
   if (!dateString) return new Date().toLocaleDateString("sw-TZ");
   try {

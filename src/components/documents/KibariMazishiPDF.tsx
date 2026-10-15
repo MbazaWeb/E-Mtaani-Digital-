@@ -9,6 +9,7 @@ import {
   generateQRCodeUrl,
   formatFullName,
   formatDate,
+  getCitizenId,
 } from "./types";
 import { ApplicantSignatureBox, OfficerSignatureBox } from "./SignatureBlocks";
 import { ReceiptPage } from "./ReceiptPage";
@@ -46,6 +47,7 @@ export const KibariMazishiPDF: React.FC<DocumentPDFProps> = ({ application, lang
   const weoName = fd.weo_name;
   const qr = qrDataUrl || generateQRCodeUrl(application, "MAZ");
   const sw = lang === "sw";
+  const applicantCitizenId = getCitizenId(user, fd);
 
   const L = {
     title: sw ? "KIBARI CHA MAZISHI" : "FUNERAL PERMIT",
@@ -150,6 +152,7 @@ export const KibariMazishiPDF: React.FC<DocumentPDFProps> = ({ application, lang
         <View style={s.sectionHeader}>
           <Text style={s.sectionTitle}>{L.contact}</Text>
         </View>
+        <Row label={sw ? "Namba ya Utambulisho wa Raia" : "Citizen ID Number"} value={applicantCitizenId} />
         <Row label={sw ? "Mwakilishi" : "Representative"} value={fd.family_representative ?? ""} />
         <Row label={sw ? "Simu" : "Phone"} value={fd.representative_phone ?? ""} />
         {fd.children_names ? (

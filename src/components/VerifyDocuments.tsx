@@ -286,7 +286,7 @@ export function VerifyDocuments({ lang, onBack, userRole = "citizen" }: VerifyDo
     availableDocTypes.find((d) => d.id === selectedDocType) || availableDocTypes[0];
 
   const [verificationStatus, setVerificationStatus] = useState<
-    "pending" | "verified" | "invalid" | null
+    "pending" | "verified" | "not_issued" | "invalid" | null
   >(null);
   const [verifiedDocument, setVerifiedDocument] = useState<VerifiedDocument | null>(null);
 
@@ -528,7 +528,9 @@ export function VerifyDocuments({ lang, onBack, userRole = "citizen" }: VerifyDo
       console.error("VerifyDocuments error:", err);
       setVerificationStatus("invalid");
       setErrorDetail(
-        L("Hitilafu ya mfumo. Tafadhali jaribu tena.", "System error. Please try again."),
+        err instanceof Error
+          ? err.message
+          : L("Hitilafu ya mfumo. Tafadhali jaribu tena.", "System error. Please try again."),
       );
     } finally {
       setLoading(false);
@@ -537,97 +539,53 @@ export function VerifyDocuments({ lang, onBack, userRole = "citizen" }: VerifyDo
 
   // ── E-Mtaa Application ────────────────────────────────────────────────────
   const verifyEMtaaApplication = async (searchTerm: string) => {
-    const upper = searchTerm.toUpperCase();
+    const response = await fetch("/api/verify-document", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ applicationNumber: searchTerm }),
+    });
+    const result = (await response.json()) as {
+      found?: boolean;
+      issued?: boolean;
+      error?: string;
+      document?: {
+        applicationNumber: string;
+        serviceName: string;
+        applicantMasked: string;
+        status: string;
+        issuedAt?: string | null;
+      };
+    };
 
-    // Try exact → uppercase → ilike
-    const queries = [
-      () =>
-        supabase
-          .from("applications")
-          .select(
-            `*, users:user_id(id,first_name,middle_name,last_name,nida_number,phone,email,region,district,ward,street), services(id,name,name_en,fee)`,
-          )
-          .eq("application_number", searchTerm)
-          .maybeSingle(),
-      () =>
-        supabase
-          .from("applications")
-          .select(
-            `*, users:user_id(id,first_name,middle_name,last_name,nida_number,phone,email,region,district,ward,street), services(id,name,name_en,fee)`,
-          )
-          .eq("application_number", upper)
-          .maybeSingle(),
-      () =>
-        supabase
-          .from("applications")
-          .select(
-            `*, users:user_id(id,first_name,middle_name,last_name,nida_number,phone,email,region,district,ward,street), services(id,name,name_en,fee)`,
-          )
-          .ilike("application_number", `%${searchTerm}%`)
-          .limit(1)
-          .maybeSingle(),
-    ];
-
-    let data: Record<string, unknown> | null = null;
-    for (const q of queries) {
-      const result = await q();
-      if (result.error) {
-        console.warn("Application query error:", result.error);
-        continue;
-      }
-      if (result.data) {
-        data = result.data as Record<string, unknown>;
-        break;
-      }
+    if (!response.ok) {
+      throw new Error(result.error || "Document verification could not be completed.");
     }
 
-    if (!data) {
+    if (!result.found || !result.document) {
       setVerificationStatus("invalid");
       setErrorDetail(
         L(
-          `Ombi lenye namba "${searchTerm}" halijapatikana. Angalia namba na ujaribu tena.`,
-          `Application number "${searchTerm}" not found. Check the number and try again.`,
+          "Ombi lenye namba '" + searchTerm + "' halijapatikana. Angalia namba na ujaribu tena.",
+          "Application number '" + searchTerm + "' not found. Check the number and try again.",
         ),
       );
       return;
     }
 
-    const user = data.users as Record<string, unknown> | null;
-    const service = data.services as Record<string, unknown> | null;
-    const serviceName = String(service?.name || data.service_name || "Unknown Service");
-
-    setVerificationStatus("verified");
+    const document = result.document;
+    setVerificationStatus(result.issued ? "verified" : "not_issued");
     setVerifiedDocument({
       documentType: "application",
-      id: String(data.id ?? ""),
-      type: serviceName,
-      name: serviceName,
-      issueDate: new Date(
-        String(data.updated_at || data.created_at || Date.now()),
-      ).toLocaleDateString(),
-      issuedAt: String(data.issued_at ?? ""),
-      verificationCode: String(data.application_number ?? ""),
-      status: String(data.status ?? ""),
-      applicantMasked: maskName(String(user?.first_name ?? ""), String(user?.last_name ?? "")),
-      applicantFull: `${user?.first_name ?? ""} ${user?.middle_name ?? ""} ${user?.last_name ?? ""}`
-        .replace(/\s+/g, " ")
-        .trim(),
-      nidaNumber: String(user?.nida_number ?? ""),
-      nidaMasked: maskNida(String(user?.nida_number ?? "")),
-      phone: String(user?.phone ?? ""),
-      phoneMasked: maskPhone(String(user?.phone ?? "")),
-      email: String(user?.email ?? ""),
-      region: String(data.region ?? user?.region ?? ""),
-      district: String(data.district ?? user?.district ?? ""),
-      ward: String(data.ward ?? user?.ward ?? ""),
-      street: String(data.street ?? user?.street ?? ""),
-      formData: data.form_data as Record<string, unknown>,
-      paidAt: String(data.paid_at ?? ""),
-      serviceFee: Number(service?.fee ?? data.service_fee ?? 0),
+      type: document.serviceName,
+      name: document.serviceName,
+      issueDate: document.issuedAt ? new Date(document.issuedAt).toLocaleDateString() : "",
+      issuedAt: document.issuedAt || "",
+      verificationCode: document.applicationNumber,
+      status: document.status,
+      applicantMasked: document.applicantMasked,
     });
   };
 
-  // ── CT ID ──────────────────────────────────────────────────────────────────
   const verifyCTID = async (searchTerm: string) => {
     const upper = searchTerm.toUpperCase();
 
@@ -1401,6 +1359,39 @@ export function VerifyDocuments({ lang, onBack, userRole = "citizen" }: VerifyDo
           )}
 
           {/* ── Invalid ── */}
+          {verificationStatus === "not_issued" && verifiedDocument && (
+            <div className="bg-white rounded-3xl p-8 border-2 border-amber-400 shadow-xl space-y-5">
+              <div className="flex items-center gap-4 p-4 bg-amber-50 rounded-2xl border border-amber-200">
+                <Clock className="h-8 w-8 text-amber-600 shrink-0" />
+                <div>
+                  <p className="font-heading font-bold text-amber-900 text-lg">
+                    {L("Hati haijatolewa bado", "Document not issued yet")}
+                  </p>
+                  <p className="text-sm text-amber-800">
+                    {L(
+                      "Ombi limepatikana, lakini hati rasmi inaweza kuhakikiwa baada ya kutolewa na ofisi.",
+                      "The application was found, but its official document can only be verified after the office issues it.",
+                    )}
+                  </p>
+                </div>
+              </div>
+              <div className="p-4 bg-stone-50 rounded-2xl space-y-2">
+                <p className="font-mono font-bold text-stone-900">
+                  {vf(verifiedDocument, "verificationCode")}
+                </p>
+                <p className="text-sm text-stone-600">
+                  {vf(verifiedDocument, "type")} · {statusLabel(verifiedDocument.status).label}
+                </p>
+              </div>
+              <button
+                onClick={resetSearch}
+                className="w-full h-14 bg-stone-900 text-white rounded-2xl font-bold hover:bg-black transition-all"
+              >
+                {L("Jaribu Tena", "Try Again")}
+              </button>
+            </div>
+          )}
+
           {verificationStatus === "invalid" && (
             <div className="bg-white rounded-3xl p-8 border-2 border-red-400 shadow-xl shadow-red-100/50 space-y-6">
               <div className="flex items-center gap-4 p-4 bg-red-50 rounded-2xl border border-red-100">

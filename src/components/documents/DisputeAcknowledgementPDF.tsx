@@ -2,6 +2,7 @@ import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import type { Application } from "@/lib/supabase";
 import { formatDate } from "./types";
+import { getCitizenId } from "./types";
 
 const styles = StyleSheet.create({
   page: {
@@ -95,6 +96,7 @@ export function DisputeAcknowledgementPDF({
           <Text style={styles.sectionTitle}>{sw ? "TAARIFA ZA OMBI" : "APPLICATION DETAILS"}</Text>
         </View>
         <Row label={sw ? "Mwombaji" : "Applicant"} content={applicant || data.complainant_name} />
+        <Row label={sw ? "Namba ya Utambulisho wa Raia" : "Citizen ID Number"} content={getCitizenId(user, data)} />
         <Row label={sw ? "Aina ya mgogoro" : "Dispute type"} content={data.dispute_type} />
         <Row label={sw ? "Mlalamikiwa" : "Respondent"} content={respondent} />
         <Row label={sw ? "Kichwa" : "Title"} content={data.title} />

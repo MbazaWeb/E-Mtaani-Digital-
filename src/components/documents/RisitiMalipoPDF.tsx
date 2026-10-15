@@ -4,6 +4,7 @@ import { calculateServiceFee, getApplicantType, splitFee } from '@/constants/ser
 import type { DocumentPDFProps } from './types';
 import { TANZANIA_EMBLEM_DATA_URL } from '@/constants/emblem';
 import { formatPaidAmount } from '@/lib/currency';
+import { getCitizenId } from './types';
 
 const styles = StyleSheet.create({
   page: {
@@ -63,6 +64,10 @@ export const RisitiMalipoPDF: React.FC<DocumentPDFProps> = ({ application, lang 
           <View style={styles.row}>
             <Text style={styles.label}>{sw ? 'Mteja' : 'Customer'}</Text>
             <Text style={styles.value}>{applicantName}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>{sw ? 'Namba ya Utambulisho wa Raia' : 'Citizen ID Number'}</Text>
+            <Text style={styles.value}>{getCitizenId(application.users, formData)}</Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>{sw ? 'Huduma' : 'Service'}</Text>

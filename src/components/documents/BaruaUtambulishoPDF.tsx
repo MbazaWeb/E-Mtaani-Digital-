@@ -12,6 +12,7 @@ import {
   generateQRCodeUrl,
   formatFullName,
   formatDate,
+  getCitizenId,
 } from "./types";
 import { OfficerSignatureBox } from "./SignatureBlocks";
 import { ReceiptPage } from "./ReceiptPage";
@@ -130,6 +131,7 @@ export const BaruaUtambulishoPDF: React.FC<DocumentPDFProps> = ({
   const subjectName =
     beneficiaryName ||
     (formatFullName(user) !== "N/A" ? formatFullName(user) : fd.applicant_name || "N/A");
+  const applicantCitizenId = getCitizenId(user, fd);
 
   return (
     <Document>
@@ -289,6 +291,10 @@ export const BaruaUtambulishoPDF: React.FC<DocumentPDFProps> = ({
                 <View style={s.infoRow}>
                   <Text style={s.infoLabel}>{sw ? "Jina Kamili:" : "Full Name:"}</Text>
                   <Text style={s.infoValue}>{subjectName}</Text>
+                </View>
+                <View style={s.infoRow}>
+                  <Text style={s.infoLabel}>{sw ? "Namba ya Utambulisho wa Raia:" : "Citizen ID Number:"}</Text>
+                  <Text style={s.infoValue}>{applicantCitizenId}</Text>
                 </View>
                 {isSelf ? (
                   <View style={s.infoRow}>

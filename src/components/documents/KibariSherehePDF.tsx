@@ -9,6 +9,7 @@ import {
   generateQRCodeUrl,
   formatFullName,
   formatDate,
+  getCitizenId,
 } from "./types";
 import { ApplicantSignatureBox, OfficerSignatureBox } from "./SignatureBlocks";
 import { ReceiptPage } from "./ReceiptPage";
@@ -113,6 +114,7 @@ export const KibariSherehePDF: React.FC<DocumentPDFProps> = ({ application, lang
   const applicantName = fd.organizer_name || formatFullName(user);
   const applicantNida = fd.organizer_nida || user?.nida_number;
   const applicantPhone = fd.organizer_phone || user?.phone;
+  const applicantCitizenId = getCitizenId(user, fd);
 
   return (
     <Document>
@@ -156,6 +158,7 @@ export const KibariSherehePDF: React.FC<DocumentPDFProps> = ({ application, lang
           <Text style={s.sectionTitle}>{sw ? "MWOMBAJI" : "APPLICANT"}</Text>
         </View>
         <Row label={sw ? "Jina Kamili" : "Full Name"} value={applicantName} />
+        <Row label={sw ? "Namba ya Utambulisho wa Raia" : "Citizen ID Number"} value={applicantCitizenId} />
         <Row label={sw ? "NIDA" : "NIDA No."} value={applicantNida} />
         <Row label={sw ? "Simu" : "Phone"} value={applicantPhone} />
 

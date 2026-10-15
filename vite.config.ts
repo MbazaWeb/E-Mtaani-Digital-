@@ -60,6 +60,56 @@ function localAdminApi(): Plugin {
           }
         }
       });
+
+      server.middlewares.use("/api/verify-document", async (req, res) => {
+        if (req.method !== "POST") {
+          res.statusCode = 405;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify({ error: "Method not allowed" }));
+          return;
+        }
+
+        const chunks: Buffer[] = [];
+        for await (const chunk of req) chunks.push(Buffer.from(chunk));
+
+        let body: unknown = {};
+        try {
+          body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+        } catch {
+          res.statusCode = 400;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify({ error: "Invalid JSON request body" }));
+          return;
+        }
+
+        try {
+          const { default: handler } = await server.ssrLoadModule("/api/verify-document.ts");
+          let statusCode = 200;
+          const response = {
+            status(code: number) {
+              statusCode = code;
+              return response;
+            },
+            setHeader(name: string, value: string) {
+              res.setHeader(name, value);
+            },
+            json(data: unknown) {
+              res.statusCode = statusCode;
+              res.setHeader("Content-Type", "application/json");
+              res.end(JSON.stringify(data));
+            },
+          };
+
+          await handler({ method: req.method, body }, response);
+        } catch (error) {
+          console.error("Local document verification API error:", error);
+          if (!res.headersSent) {
+            res.statusCode = 500;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ error: "Document verification could not be completed." }));
+          }
+        }
+      });
     },
   };
 }

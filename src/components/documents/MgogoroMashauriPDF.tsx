@@ -11,6 +11,7 @@ import {
   generateQRCodeUrl,
   formatFullName,
   formatDate,
+  getCitizenId,
 } from "./types";
 import { ApplicantSignatureBox, OfficerSignatureBox } from "./SignatureBlocks";
 import { ReceiptPage } from "./ReceiptPage";
@@ -108,6 +109,7 @@ export const MgogoroMashauriPDF: React.FC<DocumentPDFProps> = ({
   const compName =
     formatFullName(user) !== "N/A" ? formatFullName(user) : String(fd.complainant_name || "N/A");
   const compNida = user?.nida_number || fd.complainant_nida || "—";
+  const compCitizenId = getCitizenId(user, fd);
   const compPhone = user?.phone || fd.complainant_phone || "—";
   const compWard = user?.ward || fd.complainant_ward || "—";
 
@@ -177,6 +179,7 @@ export const MgogoroMashauriPDF: React.FC<DocumentPDFProps> = ({
         <View style={s.twoCol}>
           <View style={s.colLeft}>
             <Row label={sw ? "Jina" : "Name"} value={compName} />
+            <Row label={sw ? "Namba ya Utambulisho wa Raia" : "Citizen ID Number"} value={compCitizenId} />
             <Row label="NIDA" value={compNida} />
           </View>
           <View style={s.colRight}>
