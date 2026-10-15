@@ -1,0 +1,169 @@
+/* Google Fonts loaded in index.html <head> to avoid bundler issues */
+
+/* Tailwind CSS v4 — single import with source scanning */
+@import "tailwindcss" source(none);
+@source "../src";
+
+/* Register custom Tailwind utilities and colors */
+@theme {
+  --color-primary: hsl(152 60% 28%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-secondary: hsl(210 65% 42%);
+  --color-secondary-foreground: hsl(0 0% 100%);
+  --color-accent: hsl(42 90% 55%);
+  --color-accent-foreground: hsl(42 90% 12%);
+  --color-tz-green: hsl(152 60% 28%);
+  --color-tz-blue: hsl(210 65% 42%);
+  --color-tz-gold: hsl(42 90% 55%);
+
+  /* Font families — generates font-sans, font-heading, font-serif utilities */
+  --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-family-heading: "Outfit", sans-serif;
+  --font-family-serif: "Outfit", sans-serif;
+  /* Also expose as --font-* for direct var() use in globals.css */
+  --font-heading: "Outfit", sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@import "./styles/globals.css";
+@import "./styles/print.css";
+
+.service-form {
+  --color-primary: var(--color-stone-700);
+  --color-primary-foreground: #fff;
+  --color-secondary: var(--color-stone-600);
+  --color-secondary-foreground: #fff;
+  --color-accent: var(--color-stone-300);
+  --color-accent-foreground: var(--color-stone-900);
+  --color-tz-green: var(--color-stone-700);
+  --color-tz-blue: var(--color-stone-700);
+  --color-tz-gold: var(--color-stone-500);
+  --color-amber-50: var(--color-stone-50);
+  --color-amber-100: var(--color-stone-100);
+  --color-amber-200: var(--color-stone-200);
+  --color-amber-300: var(--color-stone-300);
+  --color-amber-500: var(--color-stone-500);
+  --color-amber-600: var(--color-stone-600);
+  --color-amber-700: var(--color-stone-700);
+  --color-amber-800: var(--color-stone-800);
+  --color-blue-50: var(--color-stone-50);
+  --color-blue-100: var(--color-stone-100);
+  --color-blue-200: var(--color-stone-200);
+  --color-blue-400: var(--color-stone-400);
+  --color-blue-500: var(--color-stone-500);
+  --color-blue-600: var(--color-stone-600);
+  --color-blue-700: var(--color-stone-700);
+  --color-emerald-50: var(--color-stone-50);
+  --color-emerald-100: var(--color-stone-100);
+  --color-emerald-200: var(--color-stone-200);
+  --color-emerald-300: var(--color-stone-300);
+  --color-emerald-400: var(--color-stone-400);
+  --color-emerald-500: var(--color-stone-500);
+  --color-emerald-600: var(--color-stone-600);
+  --color-emerald-700: var(--color-stone-700);
+  --color-emerald-800: var(--color-stone-800);
+  --color-emerald-900: var(--color-stone-900);
+  --color-orange-50: var(--color-stone-50);
+  --color-orange-200: var(--color-stone-200);
+  --color-orange-600: var(--color-stone-600);
+  --color-orange-700: var(--color-stone-700);
+  --color-pink-50: var(--color-stone-50);
+  --color-pink-100: var(--color-stone-100);
+  --color-pink-200: var(--color-stone-200);
+  --color-pink-300: var(--color-stone-300);
+  --color-pink-400: var(--color-stone-400);
+  --color-pink-500: var(--color-stone-500);
+  --color-pink-600: var(--color-stone-600);
+  --color-pink-700: var(--color-stone-700);
+  --color-pink-800: var(--color-stone-800);
+  --color-pink-900: var(--color-stone-900);
+  --color-purple-400: var(--color-stone-400);
+  --color-red-50: var(--color-stone-50);
+  --color-red-100: var(--color-stone-100);
+  --color-red-200: var(--color-stone-200);
+  --color-red-300: var(--color-stone-300);
+  --color-red-400: var(--color-stone-400);
+  --color-red-500: var(--color-stone-500);
+  --color-red-600: var(--color-stone-600);
+  --color-red-700: var(--color-stone-700);
+  --color-rose-50: var(--color-stone-50);
+  --color-rose-100: var(--color-stone-100);
+  --color-rose-200: var(--color-stone-200);
+  --color-rose-300: var(--color-stone-300);
+  --color-rose-400: var(--color-stone-400);
+  --color-rose-500: var(--color-stone-500);
+  --color-rose-600: var(--color-stone-600);
+  --color-rose-700: var(--color-stone-700);
+  --color-rose-800: var(--color-stone-800);
+  --color-rose-900: var(--color-stone-900);
+  --color-teal-50: var(--color-stone-50);
+  --color-teal-500: var(--color-stone-500);
+  --color-teal-600: var(--color-stone-600);
+  --color-teal-700: var(--color-stone-700);
+}
+
+.dark .service-form :is(
+  [class*="bg-red-"],
+  [class*="bg-orange-"],
+  [class*="bg-amber-"],
+  [class*="bg-yellow-"],
+  [class*="bg-lime-"],
+  [class*="bg-green-"],
+  [class*="bg-emerald-"],
+  [class*="bg-teal-"],
+  [class*="bg-cyan-"],
+  [class*="bg-sky-"],
+  [class*="bg-blue-"],
+  [class*="bg-indigo-"],
+  [class*="bg-violet-"],
+  [class*="bg-purple-"],
+  [class*="bg-fuchsia-"],
+  [class*="bg-pink-"],
+  [class*="bg-rose-"]
+) {
+  background-color: var(--color-stone-800) !important;
+}
+
+.dark .service-form :is(
+  [class*="text-red-"],
+  [class*="text-orange-"],
+  [class*="text-amber-"],
+  [class*="text-yellow-"],
+  [class*="text-lime-"],
+  [class*="text-green-"],
+  [class*="text-emerald-"],
+  [class*="text-teal-"],
+  [class*="text-cyan-"],
+  [class*="text-sky-"],
+  [class*="text-blue-"],
+  [class*="text-indigo-"],
+  [class*="text-violet-"],
+  [class*="text-purple-"],
+  [class*="text-fuchsia-"],
+  [class*="text-pink-"],
+  [class*="text-rose-"]
+) {
+  color: var(--color-stone-300) !important;
+}
+
+.dark .service-form :is(
+  [class*="border-red-"],
+  [class*="border-orange-"],
+  [class*="border-amber-"],
+  [class*="border-yellow-"],
+  [class*="border-lime-"],
+  [class*="border-green-"],
+  [class*="border-emerald-"],
+  [class*="border-teal-"],
+  [class*="border-cyan-"],
+  [class*="border-sky-"],
+  [class*="border-blue-"],
+  [class*="border-indigo-"],
+  [class*="border-violet-"],
+  [class*="border-purple-"],
+  [class*="border-fuchsia-"],
+  [class*="border-pink-"],
+  [class*="border-rose-"]
+) {
+  border-color: var(--color-stone-700) !important;
+}
