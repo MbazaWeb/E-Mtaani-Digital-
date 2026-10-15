@@ -202,7 +202,9 @@ export function Applications({
       try {
         const { data, error } = await supabase
           .from("applications")
-          .select("*")
+          .select(
+            "*, users:user_id(first_name, middle_name, last_name, citizen_id, nida_number, phone, region, district, ward, photo_url)",
+          )
           .eq("id", appId)
           .maybeSingle();
         if (error) throw error;
@@ -511,7 +513,12 @@ export function Applications({
           {list.map((summaryApp, i) => {
             const details = detailsById[summaryApp.id];
             const app = details
-              ? { ...details, ...summaryApp, form_data: details.form_data }
+              ? {
+                  ...details,
+                  ...summaryApp,
+                  users: details.users || summaryApp.users,
+                  form_data: details.form_data,
+                }
               : summaryApp;
             const formData = (app.form_data || {}) as Record<string, unknown>;
             const isDisputeAcknowledgement =

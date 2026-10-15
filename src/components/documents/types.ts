@@ -414,8 +414,13 @@ export const getCitizenId = (
   user: Partial<UserProfile> | null | undefined,
   formData: Record<string, unknown> = {},
 ): string => {
-  const id = user?.citizen_id ?? formData.citizen_id ?? formData.applicant_citizen_id;
-  return typeof id === "string" || typeof id === "number" ? String(id) || "N/A" : "N/A";
+  const candidates = [user?.citizen_id, formData.citizen_id, formData.applicant_citizen_id];
+  const id = candidates.find(
+    (candidate) =>
+      (typeof candidate === "string" || typeof candidate === "number") &&
+      String(candidate).trim().length > 0,
+  );
+  return id === undefined ? "N/A" : String(id).trim();
 };
 
 export const formatDate = (dateString?: string | null): string => {
