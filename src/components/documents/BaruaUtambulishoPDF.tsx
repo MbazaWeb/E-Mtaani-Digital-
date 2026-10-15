@@ -16,6 +16,7 @@ import {
 } from "./types";
 import { OfficerSignatureBox } from "./SignatureBlocks";
 import { ReceiptPage } from "./ReceiptPage";
+import { RecipientNotice } from "./RecipientNotice";
 import { TANZANIA_EMBLEM_DATA_URL } from "@/constants/emblem";
 
 const ls = StyleSheet.create({
@@ -345,6 +346,12 @@ export const BaruaUtambulishoPDF: React.FC<DocumentPDFProps> = ({
                 </Text>
               </View>
             )}
+
+            <RecipientNotice
+              lang={lang}
+              recipient={subjectName}
+              context={String(inst.name || inst.department || "")}
+            />
 
             {/* Signature + QR */}
             <Text style={ls.signoff}>{sw ? "Wenu Mwaminifu," : "Yours faithfully,"}</Text>

@@ -13,6 +13,7 @@ import {
 } from "./types";
 import { ApplicantSignatureBox, OfficerSignatureBox } from "./SignatureBlocks";
 import { ReceiptPage } from "./ReceiptPage";
+import { RecipientNotice } from "./RecipientNotice";
 import { TANZANIA_EMBLEM_DATA_URL } from "@/constants/emblem";
 
 const ls = StyleSheet.create({
@@ -196,6 +197,12 @@ export const KibariSherehePDF: React.FC<DocumentPDFProps> = ({ application, lang
         ) : (
           <View />
         )}
+
+        <RecipientNotice
+          lang={lang}
+          recipient={String(fd.organizer_name || applicantName || "")}
+          context={eventLabel ? `${sw ? "tukio" : "event"}: ${eventLabel}` : undefined}
+        />
 
         {/* Signatures */}
         <View style={[s.signatureSection, { marginTop: 20 }]}>

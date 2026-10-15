@@ -13,6 +13,7 @@ import {
 } from "./types";
 import { ApplicantSignatureBox, OfficerSignatureBox } from "./SignatureBlocks";
 import { ReceiptPage } from "./ReceiptPage";
+import { RecipientNotice } from "./RecipientNotice";
 import { TANZANIA_EMBLEM_DATA_URL } from "@/constants/emblem";
 
 const ls = StyleSheet.create({
@@ -160,6 +161,12 @@ export const KibariMazishiPDF: React.FC<DocumentPDFProps> = ({ application, lang
         ) : (
           <View />
         )}
+
+        <RecipientNotice
+          lang={lang}
+          recipient={String(fd.deceased_full_name || "")}
+          context={sw ? "kibari cha mazishi" : "this funeral permit"}
+        />
 
         {/* Stamp + signature */}
         <View style={s.signatureSection}>
