@@ -721,7 +721,7 @@ export function Applications({
                           {loadingDetailsId === app.id
                             ? <RefreshCw size={12} className="animate-spin" />
                             : <Download size={12} />}
-                          {L("Andaa hati", "Prepare document")}
+                          {L("Andaa hati iliyosasishwa", "Prepare updated document")}
                         </button>
                       )}
                       <PDFLink

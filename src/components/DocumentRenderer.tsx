@@ -111,7 +111,8 @@ export const DocumentRenderer: React.FC<{
 }> = ({ application, lang = "sw" }) => {
   const { Component, code, filenamePrefix } = resolvePDF(application);
   const qrDataUrl = useQRCode(application, code);
-  const filename = `${filenamePrefix}-${application.application_number}.pdf`;
+  // Generate a fresh copy from the current template, distinct from a saved older PDF.
+  const filename = `${filenamePrefix}-${application.application_number}-updated.pdf`;
 
   // Resolve photo: prop chain matches what PDF components expect
   const fd = (application.form_data || {}) as Record<string, unknown>;
@@ -163,7 +164,7 @@ export const DocumentRenderer: React.FC<{
               : "Preparing…"
             : lang === "sw"
               ? "Pakua PDF"
-              : "Download PDF"}
+              : "Download updated PDF"}
         </button>
       )}
     </PDFDownloadLink>
@@ -179,7 +180,7 @@ export const DocumentPreview: React.FC<{
 }> = ({ application, lang = "sw", onClose }) => {
   const { Component, code, filenamePrefix } = resolvePDF(application);
   const qrDataUrl = useQRCode(application, code);
-  const filename = `${filenamePrefix}-${application.application_number}.pdf`;
+  const filename = `${filenamePrefix}-${application.application_number}-updated.pdf`;
   const [ready, setReady] = React.useState(false);
 
   // Resolve photo: same chain as DocumentRenderer
@@ -242,7 +243,7 @@ export const DocumentPreview: React.FC<{
               className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2"
             >
               <Download size={18} />
-              {lang === "sw" ? "Bonyeza Kupakua PDF" : "Click to Download PDF"}
+              {lang === "sw" ? "Pakua PDF iliyosasishwa" : "Download updated PDF"}
             </button>
           ) : (
             <PDFDownloadLink
